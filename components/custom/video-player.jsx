@@ -12,11 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-export function VideoPlayer() {
+export function VideoPlayer({}) {
   const [isVolumeHovered, setIsVolumeHovered] = useState(false);
 
   return (
-    <div className="relative h-screen py-4 max-w-md mx-auto">
+    <div className="relative h-screen py-4 max-w-md mx-auto group">
       <div className="flex h-full">
         <div className="h-full w-[calc(100%-60px)] bg-gray-300 relative rounded-lg overflow-hidden">
           {/* Top controls */}

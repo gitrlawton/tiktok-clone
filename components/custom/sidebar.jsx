@@ -13,7 +13,7 @@ import {
   Search,
 } from "lucide-react";
 
-export function Sidebar() {
+export function Sidebar({ onMoreClick }) {
   return (
     <div className="w-[320px] border-r border-gray-200 h-screen flex flex-col">
       <div className="p-4">
@@ -71,13 +71,13 @@ export function Sidebar() {
             <User className="mr-4 h-6 w-6" />
             Profile
           </Link>
-          <Link
-            href="#"
-            className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md"
+          <button
+            onClick={onMoreClick}
+            className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md w-full"
           >
             <MoreHorizontal className="mr-4 h-6 w-6" />
             More
-          </Link>
+          </button>
         </div>
       </nav>
 
