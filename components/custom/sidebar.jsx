@@ -31,10 +31,10 @@ export function Sidebar({ onMoreClick }) {
         <div className="space-y-1">
           <Link
             href="#"
-            className="flex items-center px-3 py-2 text-lg font-semibold text-pink-500"
+            className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md"
           >
             <Home className="mr-4 h-6 w-6" />
-            For You
+            Home
           </Link>
           <Link
             href="#"
@@ -51,7 +51,7 @@ export function Sidebar({ onMoreClick }) {
             Following
           </Link>
           <Link
-            href="#"
+            href="/upload"
             className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md"
           >
             <Plus className="mr-4 h-6 w-6" />
@@ -81,11 +81,11 @@ export function Sidebar({ onMoreClick }) {
         </div>
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
+      {/* <div className="p-4 border-t border-gray-200">
         <Button className="w-full bg-pink-500 hover:bg-pink-600 text-white">
           Log in
         </Button>
-      </div>
+      </div> */}
 
       <footer className="p-4 text-sm text-gray-500 space-y-4">
         <div className="space-x-2">
