@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Home,
@@ -65,7 +63,7 @@ export function Sidebar({ onMoreClick }) {
             LIVE
           </Link>
           <Link
-            href="#"
+            href="/profile"
             className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md"
           >
             <User className="mr-4 h-6 w-6" />
