@@ -7,16 +7,16 @@ export function Carets() {
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-gray-100"
+        className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
       >
-        <ChevronUp className="h-5 w-5" />
+        <ChevronUp className="h-5 w-5 text-gray-600 hover:text-gray-800 transition-colors duration-200" />
       </Button>
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-gray-100"
+        className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
       >
-        <ChevronDown className="h-5 w-5" />
+        <ChevronDown className="h-5 w-5 text-gray-600 hover:text-gray-800 transition-colors duration-200" />
       </Button>
     </div>
   );

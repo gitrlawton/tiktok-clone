@@ -11,9 +11,45 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { CommentModal } from "./comment-modal";
 
 export function VideoPlayer({}) {
   const [isVolumeHovered, setIsVolumeHovered] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [comments, setComments] = useState(0);
+  const [saves, setSaves] = useState(0);
+  const [shares, setShares] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
+  const handleLike = () => {
+    if (isLiked) {
+      setLikes((prev) => prev - 1);
+      setIsLiked(false);
+    } else {
+      setLikes((prev) => prev + 1);
+      setIsLiked(true);
+    }
+  };
+
+  const handleComment = () => setIsCommentModalOpen(true);
+  const handleCommentSubmit = () => {
+    setComments((prev) => prev + 1);
+    setIsCommentModalOpen(false);
+  };
+
+  const handleSave = () => {
+    if (isSaved) {
+      setSaves((prev) => prev - 1);
+      setIsSaved(false);
+    } else {
+      setSaves((prev) => prev + 1);
+      setIsSaved(true);
+    }
+  };
+  const handleShare = () => setShares((prev) => prev + 1);
 
   return (
     <div className="relative h-screen py-4 max-w-md mx-auto group">
@@ -87,47 +123,71 @@ export function VideoPlayer({}) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-12 w-12 rounded-full bg-gray-100"
+              className="h-12 w-12 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              onClick={handleLike}
             >
-              <Heart className="h-6 w-6" />
+              <Heart
+                className={cn(
+                  "h-6 w-6 transition-colors duration-200",
+                  isLiked
+                    ? "text-pink-500 fill-pink-500"
+                    : "hover:text-pink-400"
+                )}
+              />
             </Button>
-            <span className="text-xs mt-1">311.5K</span>
+            <span className="text-xs mt-1">{likes}</span>
           </div>
 
           <div className="flex flex-col items-center">
             <Button
               variant="ghost"
               size="icon"
-              className="h-12 w-12 rounded-full bg-gray-100"
+              className="h-12 w-12 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              onClick={handleComment}
             >
-              <MessageCircle className="h-6 w-6" />
+              <MessageCircle className="h-6 w-6 hover:text-gray-600 transition-colors duration-200" />
             </Button>
-            <span className="text-xs mt-1">1352</span>
+            <span className="text-xs mt-1">{comments}</span>
           </div>
 
           <div className="flex flex-col items-center">
             <Button
               variant="ghost"
               size="icon"
-              className="h-12 w-12 rounded-full bg-gray-100"
+              className="h-12 w-12 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              onClick={handleSave}
             >
-              <Bookmark className="h-6 w-6" />
+              <Bookmark
+                className={cn(
+                  "h-6 w-6 transition-colors duration-200",
+                  isSaved
+                    ? "text-yellow-500 fill-yellow-500"
+                    : "hover:text-yellow-400"
+                )}
+              />
             </Button>
-            <span className="text-xs mt-1">25.8K</span>
+            <span className="text-xs mt-1">{saves}</span>
           </div>
 
           <div className="flex flex-col items-center mb-4">
             <Button
               variant="ghost"
               size="icon"
-              className="h-12 w-12 rounded-full bg-gray-100"
+              className="h-12 w-12 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              onClick={handleShare}
             >
-              <Share2 className="h-6 w-6" />
+              <Share2 className="h-6 w-6 hover:text-gray-600 transition-colors duration-200" />
             </Button>
-            <span className="text-xs mt-1">6924</span>
+            <span className="text-xs mt-1">{shares}</span>
           </div>
         </div>
       </div>
+
+      <CommentModal
+        isOpen={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        onCommentSubmit={handleCommentSubmit}
+      />
     </div>
   );
 }

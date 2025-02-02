@@ -28,7 +28,7 @@ export function Sidebar({ onMoreClick }) {
       <nav className="flex-1 px-2">
         <div className="space-y-1">
           <Link
-            href="#"
+            href="/"
             className="flex items-center px-3 py-2 text-lg text-gray-700 hover:bg-gray-100 rounded-md"
           >
             <Home className="mr-4 h-6 w-6" />
