@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { upload } from "@vercel/blob/client";
+import { useState, useRef } from "react";
 import {
   Upload,
   Video,
@@ -26,6 +27,10 @@ import { Card } from "@/components/ui/card";
 export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [videoSelected, setVideoSelected] = useState(false);
+  const [blob, setBlob] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const inputFileRef = useRef(null);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -37,14 +42,62 @@ export default function UploadPage() {
     setIsDragging(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = async (e) => {
     e.preventDefault();
     setIsDragging(false);
-    setVideoSelected(true);
+    const file = e.dataTransfer.files[0];
+    await uploadFile(file);
   };
 
-  const handleFileSelect = () => {
+  const handleFileSelect = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    const file = files[0];
+    setSelectedFile(file);
+
+    // Immediately set video as selected and start upload
     setVideoSelected(true);
+
+    try {
+      const newBlob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload-video",
+        onProgressUpdate: (progress) => {
+          // Ensure progress is a number between 0 and 100
+          const progressPercentage = Math.min(Math.max(progress, 0), 100);
+          setUploadProgress(progressPercentage);
+        },
+      });
+
+      // Ensure progress reaches 100% when upload completes
+      setUploadProgress(100);
+      setBlob(newBlob);
+    } catch (error) {
+      console.log("Upload failed:", error);
+      setVideoSelected(false);
+      setUploadProgress(0);
+      setSelectedFile(null);
+    }
+  };
+
+  const uploadFile = async (file) => {
+    try {
+      const newBlob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload-video",
+        onProgressUpdate: (progress) => {
+          setUploadProgress(progress);
+        },
+      });
+
+      setBlob(newBlob);
+      setVideoSelected(true);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    }
   };
 
   if (videoSelected) {
@@ -55,17 +108,37 @@ export default function UploadPage() {
           <div className="max-w-[1300px] mx-auto px-8 py-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
-                <span className="font-semibold">cat_being_fed.mp4</span>
-                <span className="text-sm text-gray-500">540P</span>
+                <span className="font-semibold">{selectedFile?.name}</span>
+                {selectedFile?.size && (
+                  <span className="text-sm text-gray-500">
+                    {`${(selectedFile.size / 1024 / 1024).toFixed(2)}MB`}
+                  </span>
+                )}
               </div>
-              <Button variant="outline">Replace</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setVideoSelected(false);
+                  setBlob(null);
+                  if (inputFileRef.current) {
+                    inputFileRef.current.value = "";
+                  }
+                }}
+              >
+                Replace
+              </Button>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-green-600 mb-4">
               <div className="w-2 h-2 rounded-full bg-green-600" />
-              Uploaded (1.57MB)
+              {uploadProgress === 0
+                ? "Upload in progress..."
+                : `Uploaded (${uploadProgress.toFixed(2)}%)`}
             </div>
-            <div className="h-1 w-full bg-green-600 rounded" />
+            <div
+              className="h-1 w-full bg-green-600 rounded"
+              style={{ width: `${uploadProgress}%` }}
+            />
           </div>
         </div>
 
@@ -190,6 +263,13 @@ export default function UploadPage() {
 
   return (
     <div className="max-w-[1300px] mx-auto p-8">
+      <input
+        type="file"
+        ref={inputFileRef}
+        onChange={handleFileSelect}
+        accept="video/*"
+        className="hidden"
+      />
       <div
         className={cn(
           "border-2 border-dashed rounded-lg p-12 text-center",
@@ -198,6 +278,7 @@ export default function UploadPage() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={() => inputFileRef.current.click()}
       >
         {/* Original upload UI */}
         <div className="max-w-[1000px] mx-auto">
