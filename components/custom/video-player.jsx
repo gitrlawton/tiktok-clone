@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Heart,
   MessageCircle,
@@ -14,7 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { CommentModal } from "./comment-modal";
 
-export function VideoPlayer({}) {
+export function VideoPlayer({ video, isActive = true, onNext, onPrev }) {
   const [isVolumeHovered, setIsVolumeHovered] = useState(false);
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState(0);
@@ -23,6 +23,8 @@ export function VideoPlayer({}) {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const handleLike = () => {
     if (isLiked) {
@@ -49,12 +51,44 @@ export function VideoPlayer({}) {
       setIsSaved(true);
     }
   };
+
   const handleShare = () => setShares((prev) => prev + 1);
+
+  useEffect(() => {
+    if (isActive && videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isActive, isPlaying]);
+
+  const handleVideoClick = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
 
   return (
     <div className="relative h-screen py-4 max-w-md mx-auto group">
       <div className="flex h-full">
-        <div className="h-full w-[calc(100%-60px)] bg-gray-300 relative rounded-lg overflow-hidden">
+        <div className="h-full w-[calc(100%-60px)] relative rounded-lg overflow-hidden">
+          <video
+            ref={videoRef}
+            src={video.url}
+            className="w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            onClick={handleVideoClick}
+          />
           {/* Top controls */}
           <div className="absolute top-4 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
             <div

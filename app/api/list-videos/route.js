@@ -16,6 +16,7 @@ export async function GET() {
       videos: videoFiles.map((blob) => ({
         url: blob.url,
         pathname: blob.pathname,
+        name: decodeURIComponent(blob.pathname.split("/").pop().split(".")[0]),
         size: blob.size,
         uploadedAt: blob.uploadedAt,
       })),

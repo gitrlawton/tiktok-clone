@@ -126,7 +126,7 @@ export default function VideosPage() {
                         {video.name || `Video ${index + 1}`}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date().toLocaleString("en-US", {
+                        {new Date(video.uploadedAt).toLocaleString("en-US", {
                           month: "short",
                           day: "numeric",
                           hour: "2-digit",

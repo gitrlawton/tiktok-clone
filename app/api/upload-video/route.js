@@ -16,6 +16,10 @@ export async function POST(request) {
             "video/x-msvideo",
           ],
           maximumSizeInBytes: 100 * 1024 * 1024, // 100MB max file size
+          metadata: {
+            uploadedAt: new Date().toISOString(),
+            originalName: pathname,
+          },
         };
       },
     });

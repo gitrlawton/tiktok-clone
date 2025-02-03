@@ -30,6 +30,8 @@ export default function UploadPage() {
   const [blob, setBlob] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
+  const [videoThumbnail, setVideoThumbnail] = useState(null);
   const inputFileRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -58,6 +60,35 @@ export default function UploadPage() {
     const file = files[0];
     setSelectedFile(file);
 
+    // Create preview URLs for video and thumbnail
+    const previewUrl = URL.createObjectURL(file);
+    setVideoPreview(previewUrl);
+
+    // Generate video thumbnail
+    const videoElement = document.createElement("video");
+    videoElement.src = previewUrl;
+    videoElement.addEventListener("loadedmetadata", () => {
+      // Seek to 1 second into the video
+      videoElement.currentTime = 1;
+    });
+    videoElement.addEventListener(
+      "timeupdate",
+      () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 100;
+        canvas.height = 100;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoElement, 0, 0, 100, 100);
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          const thumbnailUrl = URL.createObjectURL(blob);
+          setVideoThumbnail(thumbnailUrl);
+        }, "image/jpeg");
+      },
+      { once: true }
+    );
+
     // Immediately set video as selected and start upload
     setVideoSelected(true);
 
@@ -80,6 +111,16 @@ export default function UploadPage() {
       setVideoSelected(false);
       setUploadProgress(0);
       setSelectedFile(null);
+
+      // Clean up the preview and thumbnail URLs if upload fails
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+        setVideoPreview(null);
+      }
+      if (videoThumbnail) {
+        URL.revokeObjectURL(videoThumbnail);
+        setVideoThumbnail(null);
+      }
     }
   };
 
@@ -115,7 +156,7 @@ export default function UploadPage() {
                   </span>
                 )}
               </div>
-              <Button
+              {/* <Button
                 variant="outline"
                 onClick={() => {
                   setVideoSelected(false);
@@ -126,7 +167,7 @@ export default function UploadPage() {
                 }}
               >
                 Replace
-              </Button>
+              </Button> */}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-green-600 mb-4">
@@ -160,7 +201,15 @@ export default function UploadPage() {
 
                     <div>
                       <h3 className="font-medium mb-2">Cover</h3>
-                      <div className="w-24 h-24 bg-gray-300 rounded"></div>
+                      <div className="w-[130px] h-[170px] bg-gray-300 rounded-lg">
+                        {videoThumbnail && (
+                          <img
+                            src={videoThumbnail}
+                            alt="Video Thumbnail"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -243,6 +292,7 @@ export default function UploadPage() {
               <div className="flex gap-4">
                 <Button
                   className="bg-pink-500 hover:bg-pink-600 text-white px-8"
+                  disabled={!blob || uploadProgress < 100}
                   onClick={() => (window.location.href = "/videos")}
                 >
                   Post
@@ -251,9 +301,19 @@ export default function UploadPage() {
               </div>
             </div>
 
-            {/* Right column - preview */}
+            {/* Right column - Video Preview */}
             <div className="w-[400px] pt-11">
-              <div className="w-[300px] h-[600px] bg-gray-300 rounded-lg mx-auto"></div>
+              {videoPreview ? (
+                <div className="w-[300px] h-[600px] bg-gray-300 rounded-lg mx-auto overflow-hidden">
+                  <video
+                    src={videoPreview}
+                    className="w-full h-full object-cover"
+                    controls
+                  />
+                </div>
+              ) : (
+                <div className="w-[300px] h-[350px] bg-gray-300 rounded-lg" />
+              )}
             </div>
           </div>
         </div>
