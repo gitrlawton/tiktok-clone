@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Lock,
@@ -24,6 +24,24 @@ import {
 
 export default function VideosPage() {
   const [activeFilter, setActiveFilter] = useState("views");
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch("/api/list-videos");
+        if (!response.ok) {
+          throw new Error("Failed to fetch videos");
+        }
+        const data = await response.json();
+        setVideos(data.videos);
+      } catch (err) {
+        console.log("Error fetching videos:", err);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   return (
     <div className="p-8 max-w-[1300px] mx-auto">
@@ -90,42 +108,62 @@ export default function VideosPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <div className="flex gap-4">
-                  <div className="w-[100px] h-[100px] bg-gray-300 rounded" />
-                  <div>
-                    <div className="font-medium">cat_being_fed</div>
-                    <div className="text-sm text-gray-500">Jan 28, 11:26AM</div>
+            {videos.map((video, index) => (
+              <TableRow key={video.url || index}>
+                <TableCell>
+                  <div className="flex gap-4">
+                    <div className="w-[100px] h-[100px] bg-gray-300 rounded">
+                      {video.url && (
+                        <video
+                          src={video.url}
+                          className="w-full h-full object-cover rounded"
+                          preload="metadata"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium">
+                        {video.name || `Video ${index + 1}`}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {new Date().toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1 text-gray-600">
-                  <Lock className="h-4 w-4" />
-                  Only me
-                </div>
-              </TableCell>
-              <TableCell className="text-right">0</TableCell>
-              <TableCell className="text-right">0</TableCell>
-              <TableCell className="text-right">0</TableCell>
-              <TableCell>
-                <div className="flex justify-end gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Link className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MessageCircle className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <Lock className="h-4 w-4" />
+                    Only me
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">0</TableCell>
+                <TableCell className="text-right">0</TableCell>
+                <TableCell className="text-right">0</TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Link className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MessageCircle className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Card>

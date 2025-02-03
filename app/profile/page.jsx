@@ -1,8 +1,30 @@
+"use client";
+
 import { Settings, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch("/api/list-videos");
+        if (!response.ok) {
+          throw new Error("Failed to fetch videos");
+        }
+        const data = await response.json();
+        setVideos(data.videos);
+      } catch (err) {
+        console.log("Error fetching videos:", err);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
   return (
     <div className="max-w-[1300px] mx-auto p-8">
       <div className="flex gap-8 mb-8">
@@ -84,11 +106,23 @@ export default function ProfilePage() {
 
       {/* Video Grid */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="aspect-[9/16] bg-gray-300 rounded-lg relative group cursor-pointer">
-          <div className="absolute bottom-4 left-4 text-white text-sm flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <span>0</span>
+        {videos.map((video, index) => (
+          <div
+            key={video.url || index}
+            className="relative group cursor-pointer"
+          >
+            <video
+              src={video.url}
+              className="w-[300px] h-[350px] object-cover rounded-lg"
+              preload="metadata"
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+              <div className="flex items-end justify-between">
+                <span className="font-bold text-md">0</span>
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
