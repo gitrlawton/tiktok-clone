@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { VideoPlayer } from "@/components/custom/video-player";
-import { Carets } from "@/components/custom/carets";
+import { VideoPlayer } from "@/components/custom/VideoPlayer";
+import { Carets } from "@/components/custom/Carets";
 
 export default function HomePage() {
   const [videos, setVideos] = useState([]);

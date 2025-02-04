@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { CommentModal } from "./comment-modal";
+import { CommentModal } from "./CommentModal";
 
 export function VideoPlayer({ video, isActive = true, onNext, onPrev }) {
   const [isVolumeHovered, setIsVolumeHovered] = useState(false);

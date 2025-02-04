@@ -3,8 +3,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { useState } from "react";
-import { Sidebar } from "@/components/custom/sidebar";
-import { MorePanel } from "@/components/custom/more-panel";
+import { Sidebar } from "@/components/custom/Sidebar";
+import { MorePanel } from "@/components/custom/MorePanel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
